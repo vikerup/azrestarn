@@ -5,10 +5,8 @@ import argparse
 import json
 import sys
 import os
-from pathlib import Path
 
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
-
 
 parser = argparse.ArgumentParser(description='azrestarn.py')
 
