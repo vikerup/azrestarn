@@ -10,7 +10,7 @@ from pathlib import Path
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
 
-parser = argparse.ArgumentParser(description='yolo')
+parser = argparse.ArgumentParser(description='azrestarn.py')
 
 parser.add_argument("--proxy", required=False, action='store_true')
 parser.add_argument("--login", required=False, action='store_true')
