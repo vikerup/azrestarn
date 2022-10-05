@@ -140,17 +140,17 @@ $ python3 azrestarn.py --bitlocker --computername LAPTOP1 --domain lössnus.tld 
 Find all groups that can be joined and check their permissions;
 
 ```
-python3 azrestarn.py --domain domain.tld --getgroup | jq '.value[] | select(.visibility == "Public")' | jq .id -r > /tmp/publicgroups.txt
+$ python3 azrestarn.py --domain domain.tld --getgroup | jq '.value[] | select(.visibility == "Public")' | jq .id -r > /tmp/publicgroups.txt
 
-for i in $(cat ../publicgroups.txt); do python3 azrestarn.py --domain domain.tld --getgroup --objectid $i --approle; done
+$ for i in $(cat ../publicgroups.txt); do python3 azrestarn.py --domain domain.tld --getgroup --objectid $i --approle; done
 
-for i in $(cat ../publicgroups.txt); do python3 azrestarn.py --domain domain.tld --getmemberobjects $i; done
+$ for i in $(cat ../publicgroups.txt); do python3 azrestarn.py --domain domain.tld --getmemberobjects $i; done
 ```
 
 Check for dynamic groups:
 
 ```
-n$ python3 azrestarn.py --dynamicgroups | jq '.value[] | "\(.displayName), \(.membershipRule)"'
+$ python3 azrestarn.py --dynamicgroups | jq '.value[] | "\(.displayName), \(.membershipRule)"'
 
 "Support, (user.userPrincipalName -startsWith \"support.\")"
 ```
