@@ -1,9 +1,9 @@
 # azrestarn
 
-## Gettings started
+## Getting started
 
 `azrestarn.py` is a tool designed to help find insecure configurations or best practice
-deviations in Azure environemnts.
+deviations in Azure environments, as well as some functions to exploit these.
 
 To authenticate run `python3 azrestarn.py --login`
 
@@ -20,8 +20,8 @@ JWT and store them in
 protected.
 
 The `user-agent` used to initiate the request is Chrome on Windows 10. This will
-help bypass some of the simple AzureAD Contitional-Access policies. `device_code`
-authentication is used to have the possilibity to login on a different machine
+help bypass some of the simple AzureAD Conditional-Access policies. `device_code`
+authentication is used to have the possibility to login on a different machine
 as well as allowing Multi-Factor Authentication (MFA).
 
 AzureAD refresh_token is valid for 14d where JWT's only live for 1h. Use `python3 azrestarn.py --refresh` to obtain new JWT's.
