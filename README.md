@@ -18,9 +18,12 @@ $ python3 azrestarn.py --login
 [+] Press any key when authentication is complete...
 ```
 
-This will generate Microsoft Graph API and Azure AD Graph API jwt's and store them in
+This will generate an AzureAD refresh_token, Microsoft Graph API and Azure AD Graph API
+JWT and store them in
 `.azrestarn_auth.json`. Be mindful of these are authentications tokens and should be
 protected.
+
+AzureAD refresh_token is valid for 14d where JWT's only live for 1h. Use `python3 azrestarn.py --refresh` to obtain new JWT's.
 
 All output from `azrestarn.py` is in JSON format and can simply be filtered with `jq`
 as shown in examples.
@@ -29,9 +32,15 @@ as shown in examples.
 
 ```
 $ python3 azrestarn.py -h
-usage: azrestarn.py [-h] [--proxy] [--login] [--bitlocker] [--computername COMPUTERNAME]
-                    [--domain DOMAIN] [--checkbestprac] [--me] [--checkme]
-                    [--objectid OBJECTID] [--owneddevices] [--dynamicgroups]
+
+usage: azrestarn.py [-h] [--proxy] [--login] [--refresh] [--bitlocker]
+                    [--computername COMPUTERNAME] [--domain DOMAIN] [--checkbestprac] [--me]
+                    [--checkme] [--objectid OBJECTID] [--owneddevices] [--dynamicgroups]
+                    [--invite] [--email EMAIL] [--dispname DISPNAME] [--inviteurl INVITEURL]
+                    [--invitedusers] [--invitedelete] [--inviteid INVITEID]
+                    [--getgrouproles GETGROUPROLES] [--getuser GETUSER] [--getgroup]
+                    [--approle] [--memberof] [--groupsettings]
+                    [--getmemberobjects GETMEMBEROBJECTS]
 
 azrestarn.py
 
@@ -39,6 +48,7 @@ options:
   -h, --help            show this help message and exit
   --proxy
   --login
+  --refresh
   --bitlocker
   --computername COMPUTERNAME
   --domain DOMAIN
@@ -48,7 +58,23 @@ options:
   --objectid OBJECTID
   --owneddevices
   --dynamicgroups
+  --invite
+  --email EMAIL
+  --dispname DISPNAME
+  --inviteurl INVITEURL
+  --invitedusers
+  --invitedelete
+  --inviteid INVITEID
+  --getgrouproles GETGROUPROLES
+  --getuser GETUSER
+  --getgroup
+  --approle
+  --memberof
+  --groupsettings
+  --getmemberobjects GETMEMBEROBJECTS
 ```
+
+Check authenticated user properties:
 
 ```
 $ python3 azrestarn.py --me
@@ -62,6 +88,8 @@ $ python3 azrestarn.py --me
     "city": "Stockholm",
 [...]
 ```
+
+Check security settings for tenant:
 
 ```
 $ python3 azrestarn.py --checkbestprac 
@@ -91,6 +119,8 @@ $ python3 azrestarn.py --checkbestprac
 }
 ```
 
+Find all devices registered to the authenticated user:
+
 ```
 $ python3 azrestarn.py --owneddevices | jq .value[].displayName
 "Phone1"
@@ -99,10 +129,45 @@ $ python3 azrestarn.py --owneddevices | jq .value[].displayName
 "LAPTOP1"
 ```
 
+Query if bitlocker key exists for specific device:
+
 ```
 $ python3 azrestarn.py --bitlocker --computername LAPTOP1 --domain lössnus.tld | jq .value[].bitLockerKey
 
 [...]
 ```
 
+Find all groups that can be joined and check their permissions;
+
+```
+python3 azrestarn.py --domain domain.tld --getgroup | jq '.value[] | select(.visibility == "Public")' | jq .id -r > /tmp/publicgroups.txt
+
+for i in $(cat ../publicgroups.txt); do python3 azrestarn.py --domain domain.tld --getgroup --objectid $i --approle; done
+
+for i in $(cat ../publicgroups.txt); do python3 azrestarn.py --domain domain.tld --getmemberobjects $i; done
+```
+
+Check for dynamic groups:
+
+```
+n$ python3 azrestarn.py --dynamicgroups | jq '.value[] | "\(.displayName), \(.membershipRule)"'
+
+"Support, (user.userPrincipalName -startsWith \"support.\")"
+```
+
+Invite guest and gain support group permission:
+
+```
+$ python3 azrestarn.py --proxy --domain snus.tld --checkbestprac | jq .allowInvitesFrom
+
+"adminsGuestInvitersAndAllMembers"
+
+$ python3 azrestarn.py --domain snus.tld --proxy --invite --email support.snus@skurk.tld --dispname guestinvite-test --inviteurl https://example.tld
+
+{"@odata.context":"https://graph.microsoft.com/v1.0/$metadata#invitations/$entity","id":"f2a10860-[...REDACTED...]5a5ba8", [...]
+
+$ python3 azrestarn.py --domain snus.tld --proxy --invitedusers
+
+{"@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users","value":[{"businessPhones":[],"displayName":guestinvite-test","givenName":null,"jobTitle":null, [...]
+```
 
