@@ -164,10 +164,19 @@ $ python3 azrestarn.py --proxy --domain snus.tld --checkbestprac | jq .allowInvi
 
 $ python3 azrestarn.py --domain snus.tld --proxy --invite --email support.snus@skurk.tld --dispname guestinvite-test --inviteurl https://example.tld
 
-{"@odata.context":"https://graph.microsoft.com/v1.0/$metadata#invitations/$entity","id":"f2a10860-[...REDACTED...]5a5ba8", [...]
+{
+    "@odata.context":"https://graph.microsoft.com/v1.0/$metadata#invitations/$entity",
+    "id":"f2a10860-[...REDACTED...]5a5ba8",
+     [...]
 
 $ python3 azrestarn.py --domain snus.tld --proxy --invitedusers
 
-{"@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users","value":[{"businessPhones":[],"displayName":guestinvite-test","givenName":null,"jobTitle":null, [...]
+{
+    "@odata.context":"https://graph.microsoft.com/v1.0/$metadata#users",
+    "value":[{"businessPhones":[],
+    "displayName":guestinvite-test",
+    "givenName":null,
+    "jobTitle":null,
+     [...]
 ```
 
