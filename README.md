@@ -8,12 +8,8 @@ deviations in Azure environemnts.
 To authenticate run `python3 azrestarn.py --login`
 
 ```
-$ python3 azrestarn.py --login
-[+] Scope: https://graph.windows.net open https://microsoft.com/devicelogin and use code: CJCCQV3DV
-
-[+] Press any key when authentication is complete...
-
-[+] Scope: https://graph.microsoft.com open https://microsoft.com/devicelogin and use code: DB3U832Q4
+$ python3 azrestarn.py --proxy --domain domain.tld --login
+[+] Fetching AzureAD PRT token. Will be valid for 14d open https://microsoft.com/devicelogin and use code: DFP49U56W 
 
 [+] Press any key when authentication is complete...
 ```
