@@ -181,3 +181,25 @@ $ python3 azrestarn.py --domain snus.tld --proxy --invitedusers
      [...]
 ```
 
+Find permissions assigned to user:
+```
+$ python3 azrestarn.py --proxy --domain domain.com --me | jq .value[].id -r
+
+asdf-asdf-asdf-asdf-1234567
+
+$ python3 azrestarn.py --proxy --domain domain.com --getuser asdf-asdf-asdf-asdf-1234567 --memberof
+
+{
+    "@odata.context":"https://graph.microsoft.com/beta/$metadata#directoryObjects",
+    "value":[
+        {"@odata.type":"#microsoft.graph.group",
+        [...]
+
+$ python3 azrestarn.py --proxy --domain domain.com --getuser asdf-asdf-asdf-asdf-1234567 --approle
+
+{
+    "@odata.context":"https://graph.microsoft.com/beta/$metadata#appRoleAssignments",
+    "value":[{
+    [...]
+```
+

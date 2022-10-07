@@ -18,7 +18,6 @@ parser.add_argument("--computername", required=False, type=str)
 parser.add_argument("--domain", required=False, type=str)
 parser.add_argument("--checkbestprac", required=False, action='store_true')
 parser.add_argument("--me", required=False,action='store_true')
-parser.add_argument("--checkme", required=False, action='store_true')
 parser.add_argument("--objectid", required=False, type=str)
 parser.add_argument("--owneddevices", required=False, action='store_true')
 parser.add_argument("--dynamicgroups", required=False, action='store_true')
@@ -46,7 +45,6 @@ computername = args.computername
 domain = args.domain
 checkbestprac = args.checkbestprac
 me = args.me
-checkme = args.checkme
 objectid = args.objectid
 owneddevices = args.owneddevices
 dynamicgroups = args.dynamicgroups
@@ -202,7 +200,7 @@ def _checkMe():
         response = requests.get(url=url, headers=headers, proxies=proxies, verify=False)
         print(json.dumps(response.json(), indent=4))
 
-def _checkMeGroups(meObjectId):
+def _checkUserGroups(meObjectId):
     if meObjectId == None:
         print("[+] Please specify --objectid parameter. Find it with --me.")
         sys.exit(1)
@@ -323,13 +321,19 @@ def _getuser(objectid):
     if objectid == None:
         print("[+] Please specify --getuser -objectid-")
         sys.exit(1)
+    if approle:
+        prop = "/appRoleAssignments"
+    elif memberof:
+        prop = "/memberOf"
+    else: prop = ""
     if os.path.exists(".azrestarn_auth.json"):
         with open('.azrestarn_auth.json','r') as f:
             dic = json.load(f)
         access_token = dic["https://graph.microsoft.com/.default"]
-        url = "https://graph.microsoft.com/v1.0/users/{}".format(objectid)
+        url = "https://graph.microsoft.com/beta/users/{}{}".format(objectid,prop)
         headers = {
-            "Authorization": "Bearer " + str(access_token)
+            "Authorization": "Bearer " + str(access_token),
+            "ConsistencyLevel": "eventual"
             }
         response = requests.get(url=url, headers=headers, proxies=proxies, verify=False)
         print(json.dumps(response.json(), indent=4))
@@ -394,7 +398,6 @@ if refresh:
 if bitlocker: _find_bitlocker_key(domain,computername)
 if checkbestprac: _check_bestprac()
 if me: _checkMe()
-if checkme: _checkMeGroups(objectid)
 if owneddevices: _checkOwnedDevices()
 if dynamicgroups: _checkDynamicGroups()
 if invite: _inviteUser()
